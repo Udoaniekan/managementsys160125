@@ -1,15 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { User } from 'src/user/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/guard/role.guard';
+import { Roles } from 'src/guard/role';
+import { Request } from 'express'
 
 @Controller('todo')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todoService.create(createTodoDto);
+  @UseGuards(AuthGuard(),RolesGuard)
+  @Roles('user', 'admin')
+  create(@Body() createTodoDto: CreateTodoDto, @Req() req: Request) {
+    return this.todoService.create(createTodoDto, req.user as User);
   }
 
   @Get()
