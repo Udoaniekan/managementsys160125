@@ -11,6 +11,5 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true
     }),
     TodoModule, UserModule, DatabaseModule],
-
 })
 export class AppModule {}
